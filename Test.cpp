@@ -6,15 +6,16 @@ using namespace ariel;
 using namespace std;
 
 TEST_CASE("A check that a new magical container is adequtely instantiated"){
-    MagicalContainer tmp1{}; 
-    CHECK_NOTHROW(MagicalContainer tmp());          //constructor should work with no parameters 
+    MagicalContainer tmp1; 
+    CHECK_NOTHROW(MagicalContainer tmp);          //constructor should work with no parameters 
     CHECK_EQ(tmp1.size(),0);                        //a new container should have 0 elements
-    CHECK_NOTHROW(MagicalContainer tmp = tmp1);     //checking the overloaded operator= 
+    MagicalContainer tmp;
+    CHECK_NOTHROW(tmp = tmp1);     //checking the overloaded operator= 
     CHECK_NOTHROW(MagicalContainer tmp = move(tmp1));       //a move operator
     tmp1.addElement(4);                                 //check that after adding elements to the container it is properly assigned to the other container after moving it.
     tmp1.addElement(5);
-    MagicalContainer tmp = move(tmp1);
-    CHECK_EQ(tmp.size(),2);                         //should have the exact same elements we added earlier
+    MagicalContainer tmp3 = move(tmp1);
+    CHECK_EQ(tmp3.size(),2);                         //should have the exact same elements we added earlier
 }
 
 TEST_CASE("Adding elements to the container and removing"){
@@ -47,22 +48,22 @@ TEST_CASE("Adding elements to the container and removing"){
 }
 
 TEST_CASE("Ascending iterator functionality"){
-    MagicalContainer *tst3;
-    CHECK_NOTHROW(MagicalContainer :: AscendingIterator(*tst3));        //make sure its properly receive container
-    MagicalContainer::AscendingIterator iter(*tst3);                    
-    CHECK_NOTHROW(MagicalContainer :: AscendingIterator itie (*tst3));  //check that more than one iterator can be formed on the same container
-    tst3->addElement(1);                                               
+    MagicalContainer tst3;
+    CHECK_NOTHROW(MagicalContainer :: AscendingIterator tbu(tst3));        //make sure its properly receive container
+    MagicalContainer::AscendingIterator iter(tst3);                    
+    CHECK_NOTHROW(MagicalContainer :: AscendingIterator itie (tst3));  //check that more than one iterator can be formed on the same container
+    tst3.addElement(1);                                               
     CHECK_NOTHROW(iter.begin());                                        //no seg fault should be thrown by either begin or end function
     CHECK_NOTHROW(iter.end()); 
     CHECK_NOTHROW(*iter);                                               //not throwing error while dereferencing an operator
-    CHECK_EQ(iter.begin(),1);                               //checking the value is properly extracted
+    CHECK_EQ(*(iter.begin()),1);                               //checking the value is properly extracted
     CHECK_NOTHROW(auto itie = iter);                    //no exception while assigning other iterator                         
     int random;
     srand((unsigned) time(NULL));
     CHECK_NOTHROW(++iter);
     for (int i=0; i<20; i++){                           //adding 30 random numbers to the container
         random = rand() % 30;
-        tst3->addElement(random);                       
+        tst3.addElement(random);                       
     } 
     int tmp = -1;
     for (auto itie = iter; itie<iter.end(); ++itie){        //checking that the order is indeed ascending
@@ -76,14 +77,14 @@ TEST_CASE("Ascending iterator functionality"){
     conti.addElement(9);
     conti.addElement(5);
     auto itt = itie;
-    CHECK_NOTHROW(itt!=itie.end());
+    CHECK_NOTHROW(bool t = (itt!=itie.end()));
     while (itt!=itie.end()){                
         if (*itt == 5){                 //trying to add a smaller number while the iterator is in 5
-            tst3->addElement(4);
+            tst3.addElement(4);
             CHECK_NE(*itt,4);           //cheking that it is still pointing to 5 after the adding
         }
         if (*itt==7){
-            tst3->addElement(8);        //adding one value after the curr one
+            tst3.addElement(8);        //adding one value after the curr one
             ++itt;
             CHECK_EQ(*itt,8);            //checking that in the next iteration the following element will be the one we just added
         }
@@ -95,13 +96,13 @@ TEST_CASE("Ascending iterator functionality"){
     while(ppt<itie.end()){                      
         CHECK_LT(*ppt,*(++ppt));            //every previous value should be smaller than the next one
         random = rand() % 30;
-        tst3->addElement(random);
+        tst3.addElement(random);
         random = rand() % 30;
-        tst3->removeElement(random);        //may remove an element or may not if it is the container
+        tst3.removeElement(random);        //may remove an element or may not if it is the container
         random = rand() % 30;
-        tst3->removeElement(random);
+        tst3.removeElement(random);
         random = rand() % 30;
-        tst3->removeElement(random);
+        tst3.removeElement(random);
         ++ppt;
         ++ppt;
     }
@@ -110,15 +111,16 @@ TEST_CASE("Ascending iterator functionality"){
     MagicalContainer::AscendingIterator bbt = itie.begin();
     ++bbt;
     ++bbt;
-    CHECK_NOTHROW(ddt>bbt);                 //checking operators safety
-    CHECK_NOTHROW(ddt<bbt);                 
+    CHECK_NOTHROW(bool sd = (ddt>bbt));                 //checking operators safety
+    CHECK_NOTHROW(bool dd = (ddt<bbt));                 
     CHECK_FALSE(ddt>bbt);                   //its an ascending order so no value should be bigger comparing to an incresed operator
     ++ddt;
     CHECK(ddt<bbt);
-    CHECK_NOTHROW(ddt==bbt);                //saftey use of operators
+    CHECK_NOTHROW(bool lil = (ddt==bbt));                //saftey use of operators
     ++ddt;
     CHECK(ddt==bbt);                        //should point to the same element
 }
+
 
 
 TEST_CASE("Cross iterator functionality"){
@@ -183,7 +185,7 @@ for (int j=0;j<10;j++){                             //also check that it is prop
     tst4.removeElement(2);
     // we should be left with this containet -> 14 13 11 9 
     auto bbt = tmpi.begin();
-    CHECK_NOTHROW(bbt!=tmpi.begin());               //saftey comparsion
+    CHECK_NOTHROW(bool ll = (bbt!=tmpi.begin()));               //saftey comparsion
     while (bbt!=tmpi.end()){
         if (*bbt==14){
             tst4.addElement(8);         // we should be left with this containet -> 14 13 11 9 8
@@ -198,16 +200,16 @@ for (int j=0;j<10;j++){                             //also check that it is prop
     }
     auto cdp = tmpi.begin();
     auto ser = tmpi.begin();
-    CHECK_NOTHROW(cdp!=ser);                    //first check that comparsion operators are saftey to use
-    CHECK_NOTHROW(cdp>ser);
-    CHECK_NOTHROW(cdp<ser);
+    CHECK_NOTHROW(bool ckk = (cdp!=ser));                    //first check that comparsion operators are saftey to use
+    CHECK_NOTHROW(bool ckk = (cdp>ser));
+    CHECK_NOTHROW(bool ckk = (cdp<ser));
     ++cdp;
-    CHECK_GT(cdp,ser);                          //by traversal order each is smaller than the other element if it appears before
+    CHECK(cdp>ser);                          //by traversal order each is smaller than the other element if it appears before
     ++ser;
     ++ser;
-    CHECK_LT(cdp,ser);
+    CHECK(cdp<ser);
     ++cdp;
-    CHECK_EQ(ser,cdp);              
+    CHECK(ser==cdp);              
 }
 
 bool isPrime(int n)
@@ -226,7 +228,7 @@ bool isPrime(int n)
 
 TEST_CASE("Prime iterator functionality"){
     MagicalContainer tst5;
-    CHECK_NOTHROW((MagicalContainer::PrimeIterator(tst5)));     //make sure its properly receive container
+    CHECK_NOTHROW((MagicalContainer::PrimeIterator (tst5)));     //make sure its properly receive container
     MagicalContainer::SideCrossIterator tmpt(tst5);
     CHECK_NOTHROW((MagicalContainer::PrimeIterator(tst5)));     //a check that more than one iterator can work above the same container
     tst5.addElement(4);
@@ -267,36 +269,37 @@ TEST_CASE("Prime iterator functionality"){
     auto ine = trt.begin();
     int abc = other.size();
     while(abc>0){                                       //making sure that the lists hold only prime numbers
-        CHECK((isPrime(*ine)));             
+        CHECK((isPrime(*ine))); 
+        ++ine;            
         abc--;
     }
 
     auto jj1 = trt.begin();
     auto jj2 = trt.begin();
-    CHECK_NOTHROW(jj1==jj2);                                //assertions that all of the comparsion are saftey
-    CHECK_NOTHROW(jj1!=jj2);        
-    CHECK_NOTHROW(jj1>jj2);
-    CHECK_NOTHROW(jj2<jj1);
+    CHECK_NOTHROW(bool ajk = (jj1==jj2));                                //assertions that all of the comparsion are saftey
+    CHECK_NOTHROW(bool ajk = (jj1!=jj2));        
+    CHECK_NOTHROW(bool ajk = (jj1>jj2));
+    CHECK_NOTHROW(bool ajk = (jj2<jj1));
 
     if (other.size()>=2){                                   //remain the ascending order
         ++jj1;  
-        CHECK_GT(jj1,jj2);
+        CHECK(jj1>jj2);
     }
     
     if (other.size()>=3){
         ++jj1;
         ++jj2;
-        CHECK_LT(jj2,jj1);
+        CHECK(jj2<jj1);
     }
 
     if (other.size()>=4){
         ++jj1;
         ++jj2;
-        CHECK_GT(jj1,jj2);
+        CHECK(jj1>jj2);
     }
     if (other.size()>=2){
         ++jj2;
-        CHECK_EQ(jj1,jj2);
+        CHECK(jj1==jj2);
     }
 
 }
