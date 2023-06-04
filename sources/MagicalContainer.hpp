@@ -11,70 +11,69 @@ class MagicalContainer{
     forward_list<int> iteratia;
     // MysticalPrimeElement* firstp;                   //the first prime element to be stored
     int contsize;
-        MagicalContainer(MagicalContainer&& other) = delete;
-        MagicalContainer(MagicalContainer& other);
-        MagicalContainer& operator=(MagicalContainer&& other) = delete;
-        MagicalContainer& operator=(const MagicalContainer &other) = default;
-                
+
     public: 
         MagicalContainer(){}
+        MagicalContainer(MagicalContainer&& other) = default;
+        MagicalContainer(MagicalContainer& other);
         void addElement(int a){return;}
         void removeElement(int b){return;}
         int size(){return contsize;}
+        void operator=(MagicalContainer&& other);
+        MagicalContainer& operator=(const MagicalContainer &other){return *this;}
 
         class AscendingIterator{
-            forward_list<int> tmp;
-            int* a;
+            MagicalContainer& conti;
+            int idx;
             public:
-                AscendingIterator(MagicalContainer& cont){}
-                AscendingIterator(const AscendingIterator &other){}
+                AscendingIterator(MagicalContainer& cont) : conti(cont),idx(0){}
+                AscendingIterator(const AscendingIterator &other):conti(other.conti),idx(other.idx){}
                 AscendingIterator(AscendingIterator&& other) = default;
                 AscendingIterator& operator=(AscendingIterator&& other) = delete;
                 ~AscendingIterator() = default;
-                bool operator ==(const AscendingIterator other){return true;}
-                bool operator != (const AscendingIterator other){return true;}
-                bool operator >(const AscendingIterator other){return true;}
-                bool operator <(const AscendingIterator other){return true;}
-                int& operator*() const {return *a;}
-                AscendingIterator& operator++(){return *this;}
-                AscendingIterator begin(){return *this;}
-                AscendingIterator end(){return *this;}
+                bool operator ==(const AscendingIterator other){return false;}
+                bool operator != (const AscendingIterator other){return false;}
+                bool operator >(const AscendingIterator other){return false;}
+                bool operator <(const AscendingIterator other){return false;}
+                int& operator*() const {return conti.contsize;}
+                AscendingIterator& operator++(){idx++;
+                return *this;}
+                AscendingIterator begin(){return AscendingIterator(conti);}
+                AscendingIterator end(){AscendingIterator itr = *this;
+                return itr;}
         };
-
         class SideCrossIterator{
-            forward_list<int> tmp;
-            int *b;
+            MagicalContainer* conti;
             public:
             SideCrossIterator(MagicalContainer& cont){}
             SideCrossIterator(const SideCrossIterator &other){}
             SideCrossIterator(SideCrossIterator&& other) = default;
             SideCrossIterator& operator=(SideCrossIterator&& other) = delete;
             ~SideCrossIterator() = default;
-            bool operator ==(const SideCrossIterator other){return true;}
-            bool operator != (const SideCrossIterator other){return true;}
-            bool operator >(const SideCrossIterator other){return true;}
-            bool operator <(const SideCrossIterator other){return true;}
-            int& operator*() const {return *b;}
+            bool operator ==(const SideCrossIterator other){return false;}
+            bool operator != (const SideCrossIterator other){return false;}
+            bool operator >(const SideCrossIterator other){return false;}
+            bool operator <(const SideCrossIterator other){return false;}
+            int& operator*() const {return conti->contsize;}
             SideCrossIterator& operator++(){return *this;}
             SideCrossIterator begin(){return *this;}
             SideCrossIterator end(){return *this;}
         };
 
         class PrimeIterator{
-            forward_list<int> tmp;
-            int *c;
+            MagicalContainer* conti;
             
             public:
-                PrimeIterator(PrimeIterator& cont){}
+                PrimeIterator(MagicalContainer& cont){}
                 PrimeIterator(const PrimeIterator &other){}
                 PrimeIterator(PrimeIterator&& other) = default;
                 PrimeIterator& operator=(PrimeIterator&& other) = delete;
                 ~PrimeIterator() = default;
-                bool operator ==(const PrimeIterator other){return true;}
-                bool operator != (const PrimeIterator other){return true;}
-                bool operator >(const PrimeIterator other){return true;}
-                bool operator <(const PrimeIterator other){return true;}
-                int& operator*() const {return *c;}
+                bool operator ==(const PrimeIterator other){return false;}
+                bool operator != (const PrimeIterator other){return false;}
+                bool operator >(const PrimeIterator other){return false;}
+                bool operator <(const PrimeIterator other){return false;}
+                int& operator*() const {return conti->contsize;}
                 PrimeIterator& operator++(){return *this;}
                 PrimeIterator begin(){return *this;}
                 PrimeIterator end(){return *this;}
