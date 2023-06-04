@@ -126,17 +126,17 @@ TEST_CASE("Cross iterator functionality"){
     CHECK_NOTHROW((MagicalContainer::SideCrossIterator(tst4)));      //make sure its properly receive container
     MagicalContainer::SideCrossIterator tmpi(tst4);
     CHECK_NOTHROW((MagicalContainer::SideCrossIterator(tst4)));      //a check that more than one iterator can work above the same container
-    tst4.addElement(3);
-    CHECK_NOTHROW(tmpi.begin());
+    tst4.addElement(3);                 
+    CHECK_NOTHROW(tmpi.begin());                            //unexpected errors while trying to use iterator
     CHECK_NOTHROW(tmpi.end());
-    CHECK_NOTHROW(*tmpi);
-    CHECK_EQ(tmpi.begin(),3);
-    CHECK_NOTHROW(auto tmpw = tmpi);
+    CHECK_NOTHROW(*tmpi);                                   //dereference should not throw any error
+    CHECK_EQ(*(tmpi.begin()),3);
+    CHECK_NOTHROW(auto tmpw = tmpi);                        //saftey assignment
     
     for (int i=0; i<10; i++){
         tst4.addElement(i);
     }
-    auto tmpw = tmpi.begin();
+    auto tmpw = tmpi.begin();                               //cheking that it is properly traversed 
     CHECK_EQ(*tmpw,0);
     ++tmpw;
     CHECK_EQ(*tmpw,9);
@@ -158,7 +158,7 @@ TEST_CASE("Cross iterator functionality"){
     CHECK_EQ(*tmpw,5);
     ++tmpw;
 
-for (int j=0;j<10;j++){
+for (int j=0;j<10;j++){                             //also check that it is properly traversed
     tst4.removeElement(j);
 }
 
@@ -183,7 +183,7 @@ for (int j=0;j<10;j++){
     tst4.removeElement(2);
     // we should be left with this containet -> 14 13 11 9 
     auto bbt = tmpi.begin();
-    CHECK_NOTHROW(bbt!=tmpi.begin());
+    CHECK_NOTHROW(bbt!=tmpi.begin());               //saftey comparsion
     while (bbt!=tmpi.end()){
         if (*bbt==14){
             tst4.addElement(8);         // we should be left with this containet -> 14 13 11 9 8
@@ -198,7 +198,7 @@ for (int j=0;j<10;j++){
     }
     auto cdp = tmpi.begin();
     auto ser = tmpi.begin();
-    CHECK_NOTHROW(cdp!=ser);                    //first check that compersion operators are saftey to use
+    CHECK_NOTHROW(cdp!=ser);                    //first check that comparsion operators are saftey to use
     CHECK_NOTHROW(cdp>ser);
     CHECK_NOTHROW(cdp<ser);
     ++cdp;
@@ -210,17 +210,93 @@ for (int j=0;j<10;j++){
     CHECK_EQ(ser,cdp);              
 }
 
+bool isPrime(int n)
+{
+    // Corner case
+    if (n <= 1)
+        return false;
+ 
+    // Check from 2 to n-1
+    for (int i = 2; i < n; i++)
+        if (n % i == 0)
+            return false;
+ 
+    return true;
+}
+
 TEST_CASE("Prime iterator functionality"){
     MagicalContainer tst5;
-    CHECK_NOTHROW((MagicalContainer::SideCrossIterator(tst5)));     //make sure its properly receive container
+    CHECK_NOTHROW((MagicalContainer::PrimeIterator(tst5)));     //make sure its properly receive container
     MagicalContainer::SideCrossIterator tmpt(tst5);
-    CHECK_NOTHROW((MagicalContainer::SideCrossIterator(tst5)));     //a check that more than one iterator can work above the same container
+    CHECK_NOTHROW((MagicalContainer::PrimeIterator(tst5)));     //a check that more than one iterator can work above the same container
     tst5.addElement(4);
-    CHECK_NOTHROW(tmpt.begin());
+    CHECK_NOTHROW(tmpt.begin());                                //assert saftey use
     CHECK_NOTHROW(tmpt.end());
-    CHECK_NOTHROW(*tmpt);
-    CHECK_EQ(tmpt.begin(),4);
+    CHECK_NOTHROW(*tmpt);                                       //dereference safety
+    CHECK_EQ(*(tmpt.begin()),4);                        
     CHECK_NOTHROW(auto tmpk = tmpt);
+    
+    //from 0 to 20 the numbers to be inserted to container are all the prime ones such as 2,3,5,7,9...
+    for (int i=0; i<20; i++){
+        tst5.addElement(i);
+    }
+    auto tmpk = tmpt.begin();
+    CHECK_EQ(*tmpk,2);
+    ++tmpk; 
+    CHECK_EQ(*tmpk,5);
+    ++tmpk;
+    CHECK_EQ(*tmpk,7);
+    ++tmpk;
+    CHECK_EQ(*tmpk,11);
+    ++tmpk;
+    CHECK_EQ(*tmpk,13);
+    ++tmpk;
+    CHECK_EQ(*tmpk,17);
+    ++tmpk;
+    CHECK_EQ(*tmpk,19);
+    ++tmpk;
 
+    MagicalContainer other;
+    MagicalContainer :: PrimeIterator trt(other);
+    int random;
+    srand((unsigned) time(NULL));                       //inserting random numbers to the container from 0 to 100
+    for (int i=0; i<50; i++){
+        random = rand() % 100;
+        other.addElement(random);
+    }
+    auto ine = trt.begin();
+    int abc = other.size();
+    while(abc>0){                                       //making sure that the lists hold only prime numbers
+        CHECK((isPrime(*ine)));             
+        abc--;
+    }
+
+    auto jj1 = trt.begin();
+    auto jj2 = trt.begin();
+    CHECK_NOTHROW(jj1==jj2);                                //assertions that all of the comparsion are saftey
+    CHECK_NOTHROW(jj1!=jj2);        
+    CHECK_NOTHROW(jj1>jj2);
+    CHECK_NOTHROW(jj2<jj1);
+
+    if (other.size()>=2){                                   //remain the ascending order
+        ++jj1;  
+        CHECK_GT(jj1,jj2);
+    }
+    
+    if (other.size()>=3){
+        ++jj1;
+        ++jj2;
+        CHECK_LT(jj2,jj1);
+    }
+
+    if (other.size()>=4){
+        ++jj1;
+        ++jj2;
+        CHECK_GT(jj1,jj2);
+    }
+    if (other.size()>=2){
+        ++jj2;
+        CHECK_EQ(jj1,jj2);
+    }
 
 }
