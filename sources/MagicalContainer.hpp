@@ -36,17 +36,17 @@ class MagicalContainer{
                 bool operator >(const AscendingIterator other){return false;}
                 bool operator <(const AscendingIterator other){return false;}
                 int& operator*() const {return conti.contsize;}
-                AscendingIterator& operator++(){idx++;
-                return *this;}
+                AscendingIterator& operator++(){return *this;}
                 AscendingIterator begin(){return AscendingIterator(conti);}
                 AscendingIterator end(){AscendingIterator itr = *this;
                 return itr;}
         };
         class SideCrossIterator{
-            MagicalContainer* conti;
+            MagicalContainer& conti;
+            int ndx;
             public:
-            SideCrossIterator(MagicalContainer& cont){}
-            SideCrossIterator(const SideCrossIterator &other){}
+            SideCrossIterator(MagicalContainer& cont): conti(cont),ndx(0){}
+            SideCrossIterator(const SideCrossIterator &other): conti(other.conti),ndx(0){}
             SideCrossIterator(SideCrossIterator&& other) = default;
             SideCrossIterator& operator=(SideCrossIterator&& other) = delete;
             ~SideCrossIterator() = default;
@@ -54,7 +54,7 @@ class MagicalContainer{
             bool operator != (const SideCrossIterator other){return false;}
             bool operator >(const SideCrossIterator other){return false;}
             bool operator <(const SideCrossIterator other){return false;}
-            int& operator*() const {return conti->contsize;}
+            int& operator*() const {return conti.contsize;}
             SideCrossIterator& operator++(){return *this;}
             SideCrossIterator begin(){return *this;}
             SideCrossIterator end(){return *this;}
